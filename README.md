@@ -10,6 +10,7 @@ Además, ya incluye un sistema de usuarios para registrarse, iniciar sesión y t
 - Música y arte
 El objetivo del equipo es que PinguiMundo se convierta en un banco de preguntas completo, fácil de extender y divertido de jugar
 # Estructura del proyecto
+```bash
 crudzaso_games/
 │
 ├── auth.py            # Registro e inicio de sesión
@@ -18,6 +19,7 @@ crudzaso_games/
 ├── data.py            # Categorías y preguntas
 ├── main.py            # Punto de entrada al programa
 └── README.md          # Este archivo
+```
 # Cómo jugar
 Ejecuta el juego: python main.py
 
