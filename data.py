@@ -11,7 +11,7 @@ Los diccionarios de cada pregunta estan alojados en tres listas:
 3. preguntas_dificiles: preguntas de mayor dificultad '''
 
 
-preguntas_faciles = [
+preguntas_faciles_ingles = [
     {
         "texto": "Which one is correct?",
         "opciones": ["I am agree", "I agree", "I'm agree", "I am in agree"],
@@ -55,7 +55,7 @@ preguntas_faciles = [
 ]
 
 
-preguntas_intermedias = [
+preguntas_intermedias_ingles = [
     {
         "texto": "Which sentence is correct?",
         "opciones": [
@@ -159,7 +159,7 @@ preguntas_intermedias = [
 ]
 
 
-preguntas_dificiles = [
+preguntas_dificiles_ingles = [
     {
         "texto": "Which sentence sounds the most natural?",
         "opciones": [

@@ -1,3 +1,5 @@
+from utils import leer_contraseña_ocultandola
+
 usuarios = {}
 
 def registro_usuario():
@@ -12,7 +14,7 @@ def registro_usuario():
         print("Nombre de usuario ya existe. Elija otro nombre de usuario o Inicie sesion.\n")
         return
 
-    contraseña = input("Ingrese una contraseña: ").strip()
+    contraseña = leer_contraseña_ocultandola("Ingrese una contraseña: ").strip()
     if not contraseña:
         print("La contraseña no puede estar vacía.\n")
         return
@@ -30,7 +32,7 @@ def inicio_sesion():
         print("Usuario no encontrado.\n")
         return False
 
-    contraseña = input("Ingrese su contraseña: ").strip()
+    contraseña = leer_contraseña_ocultandola("Ingrese su contraseña: ").strip()
     if usuarios[nombre] == contraseña:
         print("Inicio de sesión exitoso.\n")
         return True

@@ -1,3 +1,10 @@
+import pwinput
+
+def leer_contraseña_ocultandola(entrada):
+    contraseña = pwinput.pwinput(entrada, mask = "•")
+    return contraseña
+
+
 def validar_entero_menu(menu_texto, mensaje, minimo=None, maximo=None):
     while True:
         print(menu_texto)

@@ -1,6 +1,6 @@
 import curses
 import random
-from data import preguntas_faciles, preguntas_intermedias, preguntas_dificiles
+import data 
 
 RESET = "\033[0m"
 GREEN = "\033[32m"
@@ -90,9 +90,9 @@ def juego_curses(stdscr):
     inicializar_colores()
     curses.curs_set(0)
     niveles = [
-        ("Easy", preguntas_faciles.copy()),
-        ("Intermediate", preguntas_intermedias.copy()),
-        ("Hard", preguntas_dificiles.copy())
+        ("Easy", data.preguntas_faciles_ingles.copy()),
+        ("Intermediate", data.preguntas_intermedias_ingles.copy()),
+        ("Hard", data.preguntas_dificiles_ingles.copy())
     ]
     puntuacion = 0
     for nombre_nivel, lista in niveles:
