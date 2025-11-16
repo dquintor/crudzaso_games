@@ -3,6 +3,8 @@ import random
 from data import temas
 from utils import validar_entero_menu
 import time
+import winsound
+import sys
 
 
 RESET = "\033[0m"
@@ -16,14 +18,18 @@ MAGENTA = "\033[35m"
 
 def seleccionar_tema():
     menu = ("\n---Seleccione un tema para comenzar a jugar---\n"
-            "1. Cultura\n2. Ingles\n")
-    opcion = validar_entero_menu(menu, "Elija una opcion de juego (1-2):", 1,2)
+            "1. Cultura\n2. Ingles\n3. Historia\n4. Python\n")
+    opcion = validar_entero_menu(menu, "Elija una opcion de juego (1-3):", 1,4)
     
     match opcion:
         case 1:
             return "Cultura"
         case 2: 
             return "Ingles"
+        case 3:
+            return "Historia"
+        case 4:
+            return "Python"
     
 
 def inicializar_colores():
@@ -102,11 +108,7 @@ def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto):
 
     stdscr.getch()
     
-    
-import time  # asegúrate de tener este import arriba del archivo UNA sola vez
 
-import time
-import sys
 
 def animacion_ruleta():
     elementos = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪"]
@@ -124,9 +126,13 @@ def animacion_ruleta():
         tira = " ".join(elementos)
 
         reescribir_linea(f" {tira} ")
+        winsound.Beep(300, 30)
 
         time.sleep(sleep)
         sleep += sleep_increment  
+    winsound.Beep(600, 250)
+
+
 
     print(f"\n{GREEN}Pregunta seleccionada{RESET}\n")
     time.sleep(0.4)

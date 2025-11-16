@@ -11,7 +11,6 @@ Los diccionarios de cada pregunta estan alojados en tres listas:
 3. preguntas_dificiles: preguntas de mayor dificultad '''
 
 #PREGUNTAS DE INGLES 
-
 preguntas_faciles_ingles = [
     {
         "texto": "Which one is correct?",
@@ -332,6 +331,229 @@ preguntas_dificiles_cultura = [
 ]
 
 
+#PREGUNTAS DE PYTHON
+preguntas_faciles_python = [
+    {
+        "texto": "¿Cuál es la forma correcta de imprimir algo en Python?",
+        "opciones": ["print x", "echo(x)", "print(x)", "printf(x)"],
+        "correcta": 2
+    },
+    {
+        "texto": "¿Qué operador se usa para exponentes?",
+        "opciones": ["^", "**", "exp()", "//"],
+        "correcta": 1
+    },
+    {
+        "texto": "¿Cuál es el resultado de: 3 * 2 + 1?",
+        "opciones": ["7", "9", "5", "6"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué tipo de dato es: True?",
+        "opciones": ["str", "int", "bool", "float"],
+        "correcta": 2
+    },
+    {
+        "texto": "¿Cómo se obtiene un dato ingresado por el usuario?",
+        "opciones": ["input()", "scan()", "read()", "ask()"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué símbolo inicia un comentario?",
+        "opciones": ["/", "#", "//", "%%"],
+        "correcta": 1
+    },
+    {
+        "texto": "¿Cuál es el resultado de: len('hola')?",
+        "opciones": ["3", "4", "5", "Error"],
+        "correcta": 1
+    }
+]
+
+
+preguntas_intermedias_python = [
+    {
+        "texto": "¿Cuál opción verifica correctamente si x está entre 5 y 10?",
+        "opciones": ["5 < x < 10", "x > 5 && x < 10", "5 <= x <= 10 <= x", "x in range(5 to 10)"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Cuál de estos tipos es mutable?",
+        "opciones": ["tuple", "str", "list", "int"],
+        "correcta": 2
+    },
+    {
+        "texto": "¿Qué imprime: print('a' * 3)?",
+        "opciones": ["aaa", "a3", "Error", "a a a"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué hace el método append()?",
+        "opciones": [
+            "Agrega un elemento al final de la lista",
+            "Elimina el último elemento",
+            "Ordena la lista",
+            "Crea una copia"
+        ],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Cuál es el resultado de: bool(0)?",
+        "opciones": ["True", "False", "Error", "0"],
+        "correcta": 1
+    }
+]
+
+
+preguntas_dificiles_python = [
+    {
+        "texto": "¿Cuál es el resultado de: 'hola'.upper()?",
+        "opciones": ["HOLA", "Hola", "hola", "Error"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué devuelve range(2, 6)?",
+        "opciones": ["[2,3,4,5]", "[2,3,4,5,6]", "[3,4,5,6]", "Error"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué hace este código?\nnums = [1, 2, 3]\nnums.append(4)",
+        "opciones": [
+            "Reemplaza el último valor por 4",
+            "Agrega 4 al final",
+            "Elimina el 4 de la lista",
+            "Crea una lista nueva"
+        ],
+        "correcta": 1
+    },
+    {
+        "texto": "¿Qué imprime?\nfor i in range(3):\n    print(i)",
+        "opciones": ["0 1 2", "1 2 3", "0 1 2 3", "Solo 3"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué retorna esta función?\ndef sumar(a, b):\n    return a + b\nsumar(3, 2)",
+        "opciones": ["5", "3", "2", "Error"],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué hace el método .split() en una cadena?",
+        "opciones": [
+            "Divide la cadena según espacios",
+            "Elimina espacios",
+            "Reemplaza espacios por comas",
+            "Convierte la cadena a lista de caracteres"
+        ],
+        "correcta": 0
+    },
+    {
+        "texto": "¿Qué imprime este código?\ntexto = 'Python'\nprint(texto[0])",
+        "opciones": ["P", "n", "Error", "Py"],
+        "correcta": 0
+    }
+]
+
+
+preguntas_faciles_historia = [
+    {"texto": "¿Quién descubrió América en 1492?",
+     "opciones": ["Marco Polo","Cristóbal Colón","Hernán Cortés","Vasco da Gama"],
+     "correcta": 1},
+    {"texto": "¿Qué civilización construyó las pirámides?",
+     "opciones": ["Romanos","Mayas","Egipcios","Persas"],
+     "correcta": 2},
+    {"texto": "¿En qué ciudad se encuentra el Coliseo?",
+     "opciones": ["Atenas","Roma","París","Estambul"],
+     "correcta": 1},
+    {"texto": "¿Qué invento permitió producir libros en masa?",
+     "opciones": ["Telégrafo","Imprenta","Reloj de arena","Máquina de vapor"],
+     "correcta": 1},
+    {"texto": "¿Quién fue el primer hombre en pisar la Luna?",
+     "opciones": ["Yuri Gagarin","Neil Armstrong","Buzz Aldrin","Alan Shepard"],
+     "correcta": 1},
+    {"texto": "¿Qué imperio construyó la Gran Muralla?",
+     "opciones": ["Japonés","Mongol","Chino","Persa"],
+     "correcta": 2},
+    {"texto": "¿Qué filósofo fue maestro de Alejandro Magno?",
+     "opciones": ["Platón","Aristóteles","Sócrates","Demócrito"],
+     "correcta": 1},
+    {"texto": "¿Qué país inició la Primera Guerra Mundial?",
+     "opciones": ["Alemania","Rusia","Austria-Hungría","Francia"],
+     "correcta": 2},
+    {"texto": "¿Qué civilización jugaba el juego de pelota?",
+     "opciones": ["Incas","Egipcios","Mayas","Vikingos"],
+     "correcta": 2},
+    {"texto": "¿Qué ruta conectaba Europa y Asia durante siglos?",
+     "opciones": ["Camino Inca","Ruta de la Seda","Ruta del Oro","Camino Real"],
+     "correcta": 1}
+]
+
+preguntas_intermedias_historia = [
+    {"texto": "¿Qué civilización inventó la escritura cuneiforme?",
+     "opciones": ["Fenicios","Sumerios","Griegos","Hititas"],
+     "correcta": 1},
+    {"texto": "¿Qué faraona gobernó Egipto como rey?",
+     "opciones": ["Cleopatra","Nefertiti","Hatshepsut","Meritamón"],
+     "correcta": 2},
+    {"texto": "¿Qué peste mató a un tercio de Europa?",
+     "opciones": ["Viruela","Cólera","Tifoidea","Peste Bubónica"],
+     "correcta": 3},
+    {"texto": "¿Quién dirigió la expansión francesa por Europa?",
+     "opciones": ["Luis XIV","Napoleón Bonaparte","Robespierre","Felipe II"],
+     "correcta": 1},
+    {"texto": "¿En qué año cayó Constantinopla?",
+     "opciones": ["1204","1492","1453","1000"],
+     "correcta": 2},
+    {"texto": "¿Qué tratado puso fin a la Primera Guerra Mundial?",
+     "opciones": ["París","Viena","Versalles","Ginebra"],
+     "correcta": 2},
+    {"texto": "¿Dónde nació la democracia?",
+     "opciones": ["Esparta","Roma","Atenas","Cartago"],
+     "correcta": 2},
+    {"texto": "¿Qué imperio construyó Petra?",
+     "opciones": ["Egipcio","Nabateo","Griego","Persa"],
+     "correcta": 1},
+    {"texto": "¿Qué evento inició la Segunda Guerra Mundial?",
+     "opciones": ["Pearl Harbor","Bombas atómicas","Invasión a Polonia","Hundimiento del Lusitania"],
+     "correcta": 2},
+    {"texto": "¿Quién unificó China y fue su primer emperador?",
+     "opciones": ["Confucio","Sun Tzu","Qin Shi Huang","Kublai Khan"],
+     "correcta": 2}
+]
+
+preguntas_dificiles_historia = [
+    {"texto": "¿Qué civilización creó el sistema del Quipu?",
+     "opciones": ["Maya","Egipcia","Inca","Persa"],
+     "correcta": 2},
+    {"texto": "¿Qué batalla detuvo la expansión musulmana en Europa en 732?",
+     "opciones": ["Poitiers","Austerlitz","Waterloo","Lepanto"],
+     "correcta": 0},
+    {"texto": "¿Quién fue el último zar de Rusia?",
+     "opciones": ["Alejandro III","Nicolás II","Iván IV","Pedro I"],
+     "correcta": 1},
+    {"texto": "¿Qué reino africano derrotó a Italia en 1896?",
+     "opciones": ["Etiopía","Mali","Egipto","Sudán"],
+     "correcta": 0},
+    {"texto": "¿Qué tratado dividió América entre España y Portugal?",
+     "opciones": ["Utrecht","Tordesillas","Lisboa","Toledo"],
+     "correcta": 1},
+    {"texto": "¿Qué emperador construyó Santa Sofía?",
+     "opciones": ["Constantino","Justiniano I","Teodosio","Marco Aurelio"],
+     "correcta": 1},
+    {"texto": "¿Qué guerra duró más de 100 años?",
+     "opciones": ["Crimea","Cien Años","Vietnam","Franco-Prusiana"],
+     "correcta": 1},
+    {"texto": "¿Qué civilización creó Angkor?",
+     "opciones": ["Khmer","Mongol","China","Coreana"],
+     "correcta": 0},
+    {"texto": "¿Qué país inició la Revolución Meiji?",
+     "opciones": ["Corea","China","Japón","Vietnam"],
+     "correcta": 2},
+    {"texto": "¿Qué rey creó el Código de Hammurabi?",
+     "opciones": ["Nabucodonosor","Hammurabi","Sargón","Asurbanipal"],
+     "correcta": 1}
+]
+
+
 
 temas = {
     "Cultura": [
@@ -344,4 +566,14 @@ temas = {
         ("Intermediate", preguntas_intermedias_ingles),
         ("Hard", preguntas_dificiles_ingles),
     ],
+    "Historia": [
+         ("Fácil", preguntas_faciles_historia),
+        ("Intermedio", preguntas_intermedias_historia),
+        ("Difícil", preguntas_dificiles_historia),
+    ],
+    "Python": [
+        ("Fácil", preguntas_faciles_python),
+        ("Intermedio", preguntas_intermedias_python),
+        ("Difícil", preguntas_dificiles_python),
+    ]
 }
