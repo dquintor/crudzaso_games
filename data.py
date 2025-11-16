@@ -339,7 +339,7 @@ temas = {
         ("Intermedio", preguntas_intermedias_cultura),
         ("Difícil", preguntas_dificiles_cultura),
     ],
-    "Inglés": [
+    "Ingles": [
         ("Easy", preguntas_faciles_ingles),
         ("Intermediate", preguntas_intermedias_ingles),
         ("Hard", preguntas_dificiles_ingles),
