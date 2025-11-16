@@ -1,13 +1,30 @@
 import curses
 import random
-import data 
+from data import temas
+from utils import validar_entero_menu
+import time
+
 
 RESET = "\033[0m"
 GREEN = "\033[32m"
 RED = "\033[31m"
 YELLOW = "\033[33m"
 BLUE = "\033[34m"
+CYAN = "\033[36m"
+MAGENTA = "\033[35m"
 
+
+def seleccionar_tema():
+    menu = ("\n---Seleccione un tema para comenzar a jugar---\n"
+            "1. Cultura\n2. Ingles\n")
+    opcion = validar_entero_menu(menu, "Elija una opcion de juego (1-2):", 1,2)
+    
+    match opcion:
+        case 1:
+            return "Cultura"
+        case 2: 
+            return "Ingles"
+    
 
 def inicializar_colores():
     curses.start_color()
@@ -84,23 +101,74 @@ def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto):
     stdscr.refresh()
 
     stdscr.getch()
+    
+    
+def animacion_ruleta():
+    """Animación de ruleta giratoria antes de cada pregunta"""
+    simbolos = ['◐', '◓', '◑', '◒']
+    print(f"\n{CYAN}╔════════════════════════════════════╗{RESET}")
+    print(f"{CYAN}║   🎡 GIRANDO LA RULETA...  🎡      ║{RESET}")
+    print(f"{CYAN}╚════════════════════════════════════╝{RESET}\n")
+    
+    for _ in range(15):
+        for simbolo in simbolos:
+            print(f"\r{MAGENTA}        {simbolo} {simbolo} {simbolo}  PREPARANDO PREGUNTA  {simbolo} {simbolo} {simbolo}{RESET}", end='', flush=True)
+            time.sleep(0.1)
+    
+    print(f"\n\n{GREEN}✓ ¡Pregunta lista!{RESET}\n")
+    time.sleep(0.5)
 
-
-def juego_curses(stdscr):
+def juego_curses_cultura(stdscr):
     inicializar_colores()
     curses.curs_set(0)
+    
     niveles = [
-        ("Easy", data.preguntas_faciles_ingles.copy()),
-        ("Intermediate", data.preguntas_intermedias_ingles.copy()),
-        ("Hard", data.preguntas_dificiles_ingles.copy())
+        ("Fácil", data.preguntas_dificiles_culturaguntas_faciles.copy()),
+        ("Intermedio", data.preguntas_faciles_cultura.copy()),
+        ("Difícil", data.preguntas_dificiles_cultura.copy())
     ]
+    
     puntuacion = 0
+    
     for nombre_nivel, lista in niveles:
         random.shuffle(lista)
+        
+        for indice, preg in enumerate(lista):
+            # Salir temporalmente de curses para mostrar la animación
+            curses.endwin()
+            animacion_ruleta()
+            stdscr = curses.initscr()
+            inicializar_colores()
+            curses.curs_set(0)
+            
+            texto, opciones_mezcladas, indice_correcta = seleccionar_pregunta(preg)
+            
+            stdscr.clear()
+            stdscr.addstr(0, 0, f"{nombre_nivel} - Pregunta {indice+1}", curses.color_pair(4))
+            stdscr.refresh()
+            
+            seleccion = seleccionar_opcion(stdscr, texto, opciones_mezcladas)
+            
+            if seleccion == indice_correcta:
+                puntuacion += 1
+            
+            mostrar_feedback(stdscr, texto, opciones_mezcladas, seleccion, indice_correcta)
+    
+    return {"puntuacion": puntuacion}
+
+def juego_curses(stdscr, niveles):
+    inicializar_colores()
+    curses.curs_set(0)
+    puntuacion = 0
+    
+    for nombre_nivel, lista in niveles:
+        lista = lista.copy()
+        random.shuffle(lista)
+        
         for indice, preg in enumerate(lista):
             texto, opciones_mezcladas, indice_correcta = seleccionar_pregunta(preg)
             stdscr.clear()
-            stdscr.addstr(0, 0, f"{nombre_nivel} - Question {indice+1}", curses.color_pair(4))
+            stdscr.addstr(0, 0, f"{nombre_nivel} - Pregunta {indice+1}", curses.color_pair(4))
             stdscr.refresh()
             seleccion = seleccionar_opcion(stdscr, texto, opciones_mezcladas)
             if seleccion == indice_correcta:
@@ -110,4 +178,8 @@ def juego_curses(stdscr):
     return {"puntuacion": puntuacion}
 
 def jugar():
-    curses.wrapper(juego_curses)
+    tema= seleccionar_tema()
+    niveles = temas[tema]
+    
+    curses.wrapper(juego_curses, niveles)
+    

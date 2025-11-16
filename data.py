@@ -330,3 +330,18 @@ preguntas_dificiles_cultura = [
         "correcta": 0
     }
 ]
+
+
+
+temas = {
+    "Cultura": [
+        ("Fácil", preguntas_faciles_cultura),
+        ("Intermedio", preguntas_intermedias_cultura),
+        ("Difícil", preguntas_dificiles_cultura),
+    ],
+    "Inglés": [
+        ("Easy", preguntas_faciles_ingles),
+        ("Intermediate", preguntas_intermedias_ingles),
+        ("Hard", preguntas_dificiles_ingles),
+    ],
+}
