@@ -18,8 +18,8 @@ MAGENTA = "\033[35m"
 
 def seleccionar_tema():
     menu = ("\n---Seleccione un tema para comenzar a jugar---\n"
-            "1. Cultura\n2. Ingles\n3. Historia\n4. Python\n")
-    opcion = validar_entero_menu(menu, "Elija una opcion de juego (1-3):", 1,4)
+            "1. Cultura\n2. Ingles\n3. Historia\n4. Python\n5. Musica y Arte\n")
+    opcion = validar_entero_menu(menu, "Elija una opcion de juego (1-5):", 1,5)
     
     match opcion:
         case 1:
@@ -30,6 +30,8 @@ def seleccionar_tema():
             return "Historia"
         case 4:
             return "Python"
+        case 5: 
+            return "Musica"
     
 
 def inicializar_colores():
@@ -39,6 +41,10 @@ def inicializar_colores():
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_RED)
     curses.init_pair(4, curses.COLOR_CYAN, -1)
+    curses.init_pair(5, curses.COLOR_MAGENTA, -1)
+    curses.init_pair(6, curses.COLOR_YELLOW, -1)
+    curses.init_pair(7, curses.COLOR_GREEN, -1)
+    curses.init_pair(8, curses.COLOR_RED, -1)
     
     
 def seleccionar_pregunta(pregunta):

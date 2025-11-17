@@ -553,6 +553,35 @@ preguntas_dificiles_historia = [
      "correcta": 1}
 ]
 
+#Preguntas de arte y musica
+
+arte_musica_faciles = [
+    {"texto": "¿Quién pintó la Mona Lisa?", "opciones": ["Leonardo da Vinci", "Picasso", "Van Gogh", "Monet"], "correcta": 0},
+    {"texto": "¿Cuál de estos es un instrumento de cuerda?", "opciones": ["Flauta", "Violín", "Trompeta", "Xilófono"], "correcta": 1},
+    {"texto": "¿Qué nota musical viene después de 'Do'?", "opciones": ["Mi", "Re", "Fa", "Si"], "correcta": 1},
+    {"texto": "¿Quién pintó 'La noche estrellada'?", "opciones": ["Van Gogh", "Dalí", "Picasso", "Rembrandt"], "correcta": 0},
+    {"texto": "¿Cuál de estos es un género musical?", "opciones": ["Cubismo", "Surrealismo", "Jazz", "Impresionismo"], "correcta": 2}
+]
+
+# nivel intermedio (5)
+arte_musica_intermedias = [
+    {"texto": "¿Quién compuso 'Für Elise'?", "opciones": ["Mozart", "Bach", "Beethoven", "Chopin"], "correcta": 2},
+    {"texto": "El estilo 'Impresionismo' es asociado con:", "opciones": ["Dalí", "Monet", "Frida Kahlo", "Warhol"], "correcta": 1},
+    {"texto": "¿Cuál es el tempo de 'Allegro'?", "opciones": ["Lento", "Rápido", "Muy lento", "Moderado"], "correcta": 1},
+    {"texto": "¿Quién pintó 'Las Meninas'?", "opciones": ["Velázquez", "Goya", "El Greco", "Murillo"], "correcta": 0},
+    {"texto": "¿Qué instrumento se usa en flamenco?", "opciones": ["Guitarra española", "Violín", "Piano", "Saxofón"], "correcta": 0}
+]
+
+# nivel dificil (5) - estas me costaron mas jaja
+arte_musica_dificiles = [
+    {"texto": "En música, ¿qué indica 'ff'?", "opciones": ["Muy suave", "Muy fuerte", "Moderado", "Creciente"], "correcta": 1},
+    {"texto": "¿Qué pintor es clave en el Cubismo?", "opciones": ["Picasso", "Matisse", "Kandinsky", "Seurat"], "correcta": 0},
+    {"texto": "¿Qué es un 'ostinato'?", "opciones": ["Escala descendente", "Acorde disonante", "Patrón repetido", "Silencio prolongado"], "correcta": 2},
+    {"texto": "¿Quién compuso 'La Traviata'?", "opciones": ["Verdi", "Puccini", "Mozart", "Rossini"], "correcta": 0},
+    {"texto": "¿Qué técnica pictórica usa huevo?", "opciones": ["Óleo", "Acuarela", "Temple", "Fresco"], "correcta": 2}
+]
+
+
 
 
 temas = {
@@ -575,5 +604,11 @@ temas = {
         ("Fácil", preguntas_faciles_python),
         ("Intermedio", preguntas_intermedias_python),
         ("Difícil", preguntas_dificiles_python),
+    ],
+    "Musica":[
+        ("Fácil", arte_musica_faciles),
+        ("Intermedio", arte_musica_intermedias),
+        ("Difícil", arte_musica_dificiles),
     ]
 }
+
