@@ -1,6 +1,7 @@
 from utils import validar_entero_menu
-from auth import registro_usuario, inicio_sesion
+from auth import registro_usuario, inicio_sesion, cargar_usuarios
 from game import jugar
+
 
 def menu_principal():
     menu = (
@@ -13,6 +14,7 @@ def menu_principal():
 
 
 def main():
+    cargar_usuarios()
     main_iniciado = True
     sesion = False
 
