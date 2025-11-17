@@ -32,7 +32,16 @@ def seleccionar_tema():
             return "Python"
         case 5: 
             return "Musica"
-    
+        
+def seleccionar_modo():
+    menu = ("\n---Selecciona modo de juego---\n"
+            "1. Normal (Sin limite de tiempo)\n2. Modo contrareloj(10 segundos por pregunta)\n")
+    opcion = validar_entero_menu(menu, "Elija un modo de juego(1-2:)",1,2)
+    match opcion:
+        case 1:
+            return False, 0
+        case 2:
+            return True, 10
 
 def inicializar_colores():
     curses.start_color()
@@ -45,6 +54,21 @@ def inicializar_colores():
     curses.init_pair(6, curses.COLOR_YELLOW, -1)
     curses.init_pair(7, curses.COLOR_GREEN, -1)
     curses.init_pair(8, curses.COLOR_RED, -1)
+    curses.init_pair(7, curses.COLOR_GREEN, curses.COLOR_BLACK)  
+    curses.init_pair(8, curses.COLOR_YELLOW, curses.COLOR_BLACK)  
+    curses.init_pair(9, curses.COLOR_RED, curses.COLOR_BLACK) 
+    
+def obtener_limite_por_nivel(nombre_nivel):
+    nombre = nombre_nivel.lower()
+
+    if "fácil" in nombre or "facil" in nombre:
+        return 10   
+    elif "intermedio" in nombre or "medio" in nombre:
+        return 20
+    elif "difícil" in nombre or "dificil" in nombre:
+        return 30
+    else:
+        return 15
     
     
 def seleccionar_pregunta(pregunta):
@@ -87,13 +111,97 @@ def seleccionar_opcion(stdscr, texto, opciones):
             
     return posicion_seleccion
 
-def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto):
+def seleccion_opcion_temporizado(stdscr,texto, opciones, limite_segundos):
+    curses.curs_set(0)
+    stdscr.nodelay(True)
+    
+    posicion_seleccion = 0 
+    continuar = True 
+    seleccion = None 
+    tiempo_agotado = False
+    stdscr.clear()
+    stdscr.addstr(0,0, texto, curses.color_pair(4))
+        
+    
+    inicio = time.time()
+    
+    while continuar: 
+        transcurrido = time.time() - inicio 
+        restante = int(limite_segundos - transcurrido)
+        if restante < 0:
+            restante = 0 
+            
+        if transcurrido >= limite_segundos:
+            tiempo_agotado = True
+            continuar = False
+            
+        for i, opcion in enumerate(opciones):
+            
+            if i == posicion_seleccion:
+                stdscr.attron(curses.color_pair(1))
+                stdscr.addstr(i + 2, 0, f"> {opcion}")
+                stdscr.attroff(curses.color_pair(1))
+            else:
+                stdscr.addstr(i + 2, 0, f"  {opcion}")
+                
+        timer = len(opciones) + 4 
+        ancho_timer = 20
+        
+        if limite_segundos > 0:
+            fraccion = restante / limite_segundos
+        else:
+            fraccion = 0
+
+        if fraccion < 0:
+            fraccion = 0
+        if fraccion > 1:
+            fraccion = 1
+
+        rellenos = int(ancho_timer* fraccion)
+        vacios = ancho_timer  - rellenos
+
+        barra = "▉" * rellenos + "-" * vacios 
+
+        if fraccion > 0.66:
+            color_barra = curses.color_pair(7)  
+        elif fraccion > 0.33:
+            color_barra = curses.color_pair(8)  
+        else:
+            color_barra = curses.color_pair(9)  
+
+        stdscr.attron(color_barra)
+        stdscr.addstr(timer, 0, barra)
+        stdscr.attroff(color_barra)
+
+        stdscr.addstr(timer + 1, 0, f"Tiempo restante: {int(restante)} s", curses.color_pair(4))
+
+        stdscr.refresh()
+        
+        if not tiempo_agotado:
+            tecla_presionada = stdscr.getch()
+
+            if tecla_presionada == curses.KEY_UP and posicion_seleccion > 0:
+                posicion_seleccion -= 1
+
+            elif tecla_presionada == curses.KEY_DOWN and posicion_seleccion < len(opciones) - 1:
+                posicion_seleccion += 1
+
+            elif tecla_presionada == curses.KEY_ENTER or tecla_presionada in [10, 13]:
+                seleccion = posicion_seleccion
+                continuar = False
+                
+        time.sleep(0.1)
+    stdscr.nodelay(False)
+    
+    return seleccion, tiempo_agotado
+
+
+def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto,
+                     tiempo_agotado=False, limite_segundos=0):
     stdscr.clear()
     stdscr.addstr(0, 0, texto, curses.color_pair(4))
 
-    
     for i, op in enumerate(opciones):
-
 
         if i == indice_correcto:  
             stdscr.attron(curses.color_pair(2))
@@ -108,11 +216,17 @@ def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto):
         else:  
             stdscr.addstr(i + 2, 0, f"  {op}")
 
-    
-    stdscr.addstr(len(opciones) + 4, 0, "Presione cualquier tecla para continuar", curses.color_pair(4))
-    stdscr.refresh()
+    linea_mensaje = len(opciones) + 4
 
+    if tiempo_agotado:
+        mensaje = f"Respuesta no registrada. ¡Se agotó el tiempo!"
+    else:
+        mensaje = "Presione cualquier tecla para continuar"
+
+    stdscr.addstr(linea_mensaje, 0, mensaje, curses.color_pair(4))
+    stdscr.refresh()
     stdscr.getch()
+
     
 
 
@@ -144,7 +258,7 @@ def animacion_ruleta():
     time.sleep(0.4)
 
 
-def juego_curses(stdscr, niveles):
+def juego_curses(stdscr, niveles, contrareloj , limite_segundos):
     inicializar_colores()
     curses.curs_set(0)
     puntuacion = 0
@@ -159,19 +273,44 @@ def juego_curses(stdscr, niveles):
             stdscr = curses.initscr()
             inicializar_colores()
             curses.curs_set(0)
+
             texto, opciones_mezcladas, indice_correcta = seleccionar_pregunta(preg)
             stdscr.clear()
             stdscr.addstr(0, 0, f"{nombre_nivel} - Pregunta {indice+1}", curses.color_pair(4))
             stdscr.refresh()
-            seleccion = seleccionar_opcion(stdscr, texto, opciones_mezcladas)
-            if seleccion == indice_correcta:
+
+            if contrareloj:
+                seleccion, tiempo_agotado = seleccion_opcion_temporizado(
+                    stdscr,
+                    texto,
+                    opciones_mezcladas,
+                    limite_segundos
+                )
+            else:
+                seleccion = seleccionar_opcion(stdscr, texto, opciones_mezcladas)
+                tiempo_agotado = False
+
+            
+            if (not tiempo_agotado) and (seleccion == indice_correcta):
                 puntuacion += 1
-            mostrar_feedback(stdscr, texto, opciones_mezcladas, seleccion, indice_correcta)
+
+            mostrar_feedback(
+                stdscr,
+                texto,
+                opciones_mezcladas,
+                seleccion,
+                indice_correcta,
+                tiempo_agotado,
+                limite_segundos
+            )
 
     return {"puntuacion": puntuacion}
+
 
 def jugar():
     tema= seleccionar_tema()
     niveles = temas[tema]
-    curses.wrapper(juego_curses,niveles)
+    contra_reloj, limite_segundos = seleccionar_modo()
+    
+    curses.wrapper(juego_curses,niveles, contra_reloj, limite_segundos)
     

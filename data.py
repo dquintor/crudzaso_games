@@ -591,9 +591,9 @@ temas = {
         ("Difícil", preguntas_dificiles_cultura),
     ],
     "Ingles": [
-        ("Easy", preguntas_faciles_ingles),
-        ("Intermediate", preguntas_intermedias_ingles),
-        ("Hard", preguntas_dificiles_ingles),
+        ("Fácil", preguntas_faciles_ingles),
+        ("Intermedio", preguntas_intermedias_ingles),
+        ("Difícil", preguntas_dificiles_ingles),
     ],
     "Historia": [
          ("Fácil", preguntas_faciles_historia),
