@@ -43,6 +43,44 @@ def seleccionar_modo():
         case 2:
             return True, 10
 
+def seleccionar_dificultad_y_cantidad(tema):
+    niveles_tema = temas[tema]
+    
+    menu=("\n---Seleccione dificultad---\n")
+    for i, (nombre_nivel, _) in enumerate(niveles_tema, start= 1):
+        menu += f"{i}.{nombre_nivel}\n"
+    opcion_mezcla = len(niveles_tema) +1
+    menu += f"{opcion_mezcla}. Mezclar todas las dificultades\n"
+    
+    opcion = validar_entero_menu(
+        menu, "Elija una dificultad: ",
+        1,
+        opcion_mezcla
+    )
+    
+    if opcion == opcion_mezcla:
+        nombre_nivel = "Mixto"
+        preguntas = []
+        for _, lista in niveles_tema:
+            preguntas.extend(lista)
+    else:
+        nombre_nivel, preguntas = niveles_tema[opcion - 1]
+        
+    max_preg = len(preguntas)
+    menu_cant = (
+        f"\nHay {max_preg} preguntas disponibles en este modo.\n"
+        "¿Cuántas quieres responder?\n"
+    )
+    cantidad = validar_entero_menu(
+        menu_cant,
+        f"Elige una cantidad (1-{max_preg}): ",
+        1,
+        max_preg
+    )
+    
+    preguntas_seleccionadas = random.sample(preguntas, cantidad)
+    return [(nombre_nivel, preguntas_seleccionadas)]
+        
 def inicializar_colores():
     curses.start_color()
     curses.use_default_colors()
@@ -70,6 +108,17 @@ def obtener_limite_por_nivel(nombre_nivel):
     else:
         return 15
     
+def obtener_multiplicador_puntaje(nombre_nivel):
+    nombre = nombre_nivel.lower()
+    if "fácil" in nombre or "facil" in nombre:
+        return 1
+    elif "intermedio" in nombre or "medio" in nombre:
+        return 2
+    elif "difícil" in nombre or "dificil" in nombre:
+        return 3
+    else:
+        return 2
+    
     
 def seleccionar_pregunta(pregunta):
     texto = pregunta["texto"]
@@ -80,7 +129,7 @@ def seleccionar_pregunta(pregunta):
     return texto, opciones, indice_correcta
 
 
-def seleccionar_opcion(stdscr, texto, opciones):
+def seleccionar_opcion(stdscr, header, texto, opciones):
     curses.curs_set(0)
     posicion_seleccion= 0
     
@@ -88,15 +137,16 @@ def seleccionar_opcion(stdscr, texto, opciones):
 
     while continuar:
         stdscr.clear()
-        stdscr.addstr(0, 0, texto, curses.color_pair(4))
+        stdscr.addstr(0, 0, header, curses.color_pair(6))
+        stdscr.addstr(2, 0, texto, curses.color_pair(4))
 
         for i, opcion in enumerate(opciones):
             if i == posicion_seleccion:
                 stdscr.attron(curses.color_pair(1))
-                stdscr.addstr(i + 2, 0, f"> {opcion}")
+                stdscr.addstr(i + 4, 0, f"> {opcion}")
                 stdscr.attroff(curses.color_pair(1))
             else:
-                stdscr.addstr(i + 2, 0, f"  {opcion}")
+                stdscr.addstr(i + 4, 0, f"  {opcion}")
 
         tecla_presionada = stdscr.getch()
 
@@ -111,7 +161,7 @@ def seleccionar_opcion(stdscr, texto, opciones):
             
     return posicion_seleccion
 
-def seleccion_opcion_temporizado(stdscr,texto, opciones, limite_segundos):
+def seleccion_opcion_temporizado(stdscr,header, texto, opciones, limite_segundos):
     curses.curs_set(0)
     stdscr.nodelay(True)
     
@@ -120,7 +170,8 @@ def seleccion_opcion_temporizado(stdscr,texto, opciones, limite_segundos):
     seleccion = None 
     tiempo_agotado = False
     stdscr.clear()
-    stdscr.addstr(0,0, texto, curses.color_pair(4))
+    stdscr.addstr(0, 0, header , curses.color_pair(6))
+    stdscr.addstr(2,0, texto, curses.color_pair(4))
         
     
     inicio = time.time()
@@ -139,12 +190,12 @@ def seleccion_opcion_temporizado(stdscr,texto, opciones, limite_segundos):
             
             if i == posicion_seleccion:
                 stdscr.attron(curses.color_pair(1))
-                stdscr.addstr(i + 2, 0, f"> {opcion}")
+                stdscr.addstr(i + 4, 0, f"> {opcion}")
                 stdscr.attroff(curses.color_pair(1))
             else:
-                stdscr.addstr(i + 2, 0, f"  {opcion}")
+                stdscr.addstr(i + 4, 0, f"  {opcion}")
                 
-        timer = len(opciones) + 4 
+        timer = len(opciones) + 6
         ancho_timer = 20
         
         if limite_segundos > 0:
@@ -173,7 +224,7 @@ def seleccion_opcion_temporizado(stdscr,texto, opciones, limite_segundos):
         stdscr.addstr(timer, 0, barra)
         stdscr.attroff(color_barra)
 
-        stdscr.addstr(timer + 1, 0, f"Tiempo restante: {int(restante)} s", curses.color_pair(4))
+        stdscr.addstr(timer + 1, 0, f"Tiempo restante: {int(restante)} segundos", curses.color_pair(4))
 
         stdscr.refresh()
         
@@ -197,7 +248,7 @@ def seleccion_opcion_temporizado(stdscr,texto, opciones, limite_segundos):
 
 
 def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto,
-                     tiempo_agotado=False, limite_segundos=0):
+                     tiempo_agotado=False, limite_segundos=0, mensaje_extra=None, es_bonus=True):
     stdscr.clear()
     stdscr.addstr(0, 0, texto, curses.color_pair(4))
 
@@ -222,8 +273,14 @@ def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto,
         mensaje = f"Respuesta no registrada. ¡Se agotó el tiempo!"
     else:
         mensaje = "Presione cualquier tecla para continuar"
+    
 
     stdscr.addstr(linea_mensaje, 0, mensaje, curses.color_pair(4))
+    
+    if mensaje_extra:
+        color = curses.color_pair(2) if es_bonus else curses.color_pair(3)
+        stdscr.addstr(linea_mensaje + 1, 0, mensaje_extra, color)
+        
     stdscr.refresh()
     stdscr.getch()
 
@@ -256,18 +313,42 @@ def animacion_ruleta():
 
     print(f"\n{GREEN}Pregunta seleccionada{RESET}\n")
     time.sleep(0.4)
+    
+def header(nombre_usuario, puntuacion, racha_actual, pregunta_actual, total_preguntas):
+    return (
+        f"Jugador: {nombre_usuario} | "
+        f"Puntos: {puntuacion} | "
+        f"Racha: {racha_actual} | "
+        f"Pregunta: {pregunta_actual}/{total_preguntas}"
+    )
 
 
-def juego_curses(stdscr, niveles, contrareloj , limite_segundos):
-    inicializar_colores()
-    curses.curs_set(0)
+
+
+def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario):
+    correctas = 0 
+    incorrectas = 0 
+
+    
+    total_preguntas = sum(len(lista) for _, lista in niveles)
+    if total_preguntas <= 0:
+        total_preguntas = 1
+
+    
+    base_puntos = max(1, total_preguntas // 5)
+
     puntuacion = 0
+    racha_actual = 0
+    mejor_racha = 0
+    pregunta_actual = 0
     
     for nombre_nivel, lista in niveles:
         lista = lista.copy()
         random.shuffle(lista)
+        multiplicador = obtener_multiplicador_puntaje(nombre_nivel)
         
         for indice, preg in enumerate(lista):
+            pregunta_actual += 1
             curses.endwin()
             animacion_ruleta()
             stdscr = curses.initscr()
@@ -276,23 +357,57 @@ def juego_curses(stdscr, niveles, contrareloj , limite_segundos):
 
             texto, opciones_mezcladas, indice_correcta = seleccionar_pregunta(preg)
             stdscr.clear()
-            stdscr.addstr(0, 0, f"{nombre_nivel} - Pregunta {indice+1}", curses.color_pair(4))
+            info_usuario = header(nombre_usuario,puntuacion,racha_actual,pregunta_actual, total_preguntas
+)
+            texto_header = f"[{nombre_nivel}] {texto}"
             stdscr.refresh()
 
             if contrareloj:
                 seleccion, tiempo_agotado = seleccion_opcion_temporizado(
                     stdscr,
-                    texto,
+                    info_usuario,
+                    texto_header,
                     opciones_mezcladas,
-                    limite_segundos
+                    limite_segundos, 
                 )
             else:
-                seleccion = seleccionar_opcion(stdscr, texto, opciones_mezcladas)
+                seleccion = seleccionar_opcion(stdscr,info_usuario,texto_header, opciones_mezcladas)
                 tiempo_agotado = False
-
+                
+            mensaje_extra = None
+            es_bonus = True
             
             if (not tiempo_agotado) and (seleccion == indice_correcta):
-                puntuacion += 1
+                racha_actual += 1
+                if racha_actual > mejor_racha:
+                    mejor_racha = racha_actual
+
+                puntos_pregunta = base_puntos * multiplicador
+
+        
+                bonus_racha = 0
+                if racha_actual >= 3 and racha_actual < 5:
+                    bonus_racha = 2         
+                elif racha_actual >= 5 and racha_actual < 10:
+                    bonus_racha = 5         
+                elif racha_actual >= 10:
+                    bonus_racha = 10        
+
+                puntuacion += puntos_pregunta + bonus_racha
+                correctas += 1
+                if bonus_racha > 0:
+                    mensaje_extra = (
+                        f"¡Racha x{racha_actual}! Bonus +{bonus_racha} puntos"
+                    )
+                    es_bonus = True
+
+            else:
+                if racha_actual > 1:
+                    mensaje_extra = f"Racha de {racha_actual} rota..."
+                    es_bonus = False
+                racha_actual = 0
+                incorrectas += 1
+
 
             mostrar_feedback(
                 stdscr,
@@ -303,14 +418,44 @@ def juego_curses(stdscr, niveles, contrareloj , limite_segundos):
                 tiempo_agotado,
                 limite_segundos
             )
-
-    return {"puntuacion": puntuacion}
-
-
-def jugar():
-    tema= seleccionar_tema()
-    niveles = temas[tema]
-    contra_reloj, limite_segundos = seleccionar_modo()
+    stdscr.clear()
+    stdscr.addstr(0, 0, "Resumen de la partida", curses.color_pair(4))
+    stdscr.addstr(2, 0, f"Jugador: {nombre_usuario}", curses.color_pair(6))
+    stdscr.addstr(3, 0, f"Puntuación final: {puntuacion}", curses.color_pair(6))
+    stdscr.addstr(4, 0, f"Preguntas respondidas: {total_preguntas}", curses.color_pair(6))
+    stdscr.addstr(5, 0, f"Correctas: {correctas}", curses.color_pair(2))
+    stdscr.addstr(7, 0, f"Mejor racha de aciertos: {mejor_racha}", curses.color_pair(5))
+    stdscr.addstr(6, 0, f"Incorrectas: {incorrectas}", curses.color_pair(3))
+    stdscr.addstr(8, 0, "Pulsa cualquier tecla para volver al menú...", curses.color_pair(4))
+    stdscr.refresh()
+    stdscr.getch()
     
-    curses.wrapper(juego_curses,niveles, contra_reloj, limite_segundos)
-    
+    return {"puntuacion": puntuacion, "correctas": correctas,
+            "incorrectas": incorrectas, "total": total_preguntas}
+
+def jugar(nombre_usuario):
+    jugando = True
+    while jugando: 
+        tema= seleccionar_tema()
+        niveles = seleccionar_dificultad_y_cantidad(tema)
+        contra_reloj, limite_segundos = seleccionar_modo()
+        
+        curses.wrapper(juego_curses,niveles, contra_reloj, limite_segundos, nombre_usuario)
+        menu = (
+                "\n¿Qué quieres hacer ahora?\n"
+                "1. Jugar otra vez con el MISMO usuario\n"
+                "2. Jugar con OTRO usuario (cerrar sesión actual)\n"
+                "3. Salir del juego\n"
+            )
+        opcion = validar_entero_menu(
+                menu,
+                "Elige una opción (1-3): ",
+                1,
+                3
+            )
+        if opcion == 1:
+            continue
+        elif opcion == 2:
+            return "cambiar_usuario"
+        elif opcion == 3:
+            return "salir"

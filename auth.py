@@ -50,16 +50,16 @@ def inicio_sesion():
     nombre = input("Ingrese su nombre de usuario: ").strip()
     if not nombre:
         print("El usuario no puede estar vacío. Ingrese un nombre de usuario. \n")
-        return False
+        return None
     if nombre not in usuarios:
         print("Usuario no encontrado.\n")
-        return False
+        return None
 
     contraseña = leer_contraseña_ocultandola("Ingrese su contraseña: ").strip()
     if usuarios[nombre] == contraseña:
         print("Inicio de sesión exitoso.\n")
-        return True
+        return nombre
 
     print("Contraseña incorrecta. Vuelva a intentarlo.\n")
-    return False
+    return None
 

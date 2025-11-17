@@ -16,24 +16,31 @@ def menu_principal():
 def main():
     cargar_usuarios()
     main_iniciado = True
-    sesion = False
-
+    sesion = None
     while main_iniciado:
-        opcion = menu_principal()
+        if sesion is None:
+            opcion = menu_principal()
 
-        match opcion:
-            case 1:
-                registro_usuario()
-            case 2:
-                sesion = inicio_sesion()
-                if sesion:
+            match opcion:
+                case 1:
+                    registro_usuario()
+                case 2:
+                    sesion = inicio_sesion()
+                        
+                case 3:
                     main_iniciado = False
-            case 3:
-                main_iniciado = False
+                    print("Fin del juego. ¡Vuelve pronto!")
+        else:
+                
+                resultado = jugar(sesion)
 
-    if sesion:
-        jugar()
-    else:
-        print("Fin del juego. ¡Vuelve pronto!")
+                if resultado == "cambiar_usuario":
+                    sesion = None
+
+                elif resultado == "salir":
+                    print("Fin del juego. ¡Vuelve pronto!")
+                    main_iniciado = False
+    
+                
         
 main()
