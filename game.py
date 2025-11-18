@@ -138,164 +138,215 @@ def seleccionar_pregunta(pregunta):
 
 def seleccionar_opcion(stdscr, header, texto, opciones):
     curses.curs_set(0)
-    posicion_seleccion= 0
-    
+    posicion_seleccion = 0
     continuar = True
 
     while continuar:
+        h, w = stdscr.getmaxyx()
         stdscr.clear()
-        stdscr.addstr(0, 0, header, curses.color_pair(6))
-        stdscr.addstr(2, 0, texto, curses.color_pair(4))
+
+        header_recortado = header[: max(0, w - 1)]
+        texto_recortado = texto[: max(0, w - 1)]
+
+        stdscr.addstr(0, 0, header_recortado, curses.color_pair(6))
+        if h > 2:
+            stdscr.addstr(2, 0, texto_recortado, curses.color_pair(4))
 
         for i, opcion in enumerate(opciones):
+            fila = i + 4
+            if fila >= h - 1:
+                break
+
+            prefijo = "> " if i == posicion_seleccion else "  "
+            texto_op = prefijo + str(opcion)
+
+            if len(texto_op) > w - 1:
+                if w > 4:
+                    texto_op = texto_op[: w - 4] + "..."
+                else:
+                    texto_op = texto_op[: max(0, w - 1)]
+
             if i == posicion_seleccion:
                 stdscr.attron(curses.color_pair(1))
-                stdscr.addstr(i + 4, 0, f"> {opcion}")
+                stdscr.addstr(fila, 0, texto_op)
                 stdscr.attroff(curses.color_pair(1))
             else:
-                stdscr.addstr(i + 4, 0, f"  {opcion}")
+                stdscr.addstr(fila, 0, texto_op)
+
+        stdscr.refresh()
 
         tecla_presionada = stdscr.getch()
 
-        if tecla_presionada== curses.KEY_UP and posicion_seleccion> 0:
-           posicion_seleccion-= 1
-           
-        elif tecla_presionada == curses.KEY_DOWN and posicion_seleccion< len(opciones) - 1:
+        if tecla_presionada == curses.KEY_UP and posicion_seleccion > 0:
+            posicion_seleccion -= 1
+        elif tecla_presionada == curses.KEY_DOWN and posicion_seleccion < len(opciones) - 1:
             posicion_seleccion += 1
-            
-        elif tecla_presionada == curses.KEY_ENTER or tecla_presionada in [10, 13]:
+        elif tecla_presionada in (curses.KEY_ENTER, 10, 13):
             continuar = False
-            
+
     return posicion_seleccion
 
-def seleccion_opcion_temporizado(stdscr,header, texto, opciones, limite_segundos):
+
+def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundos):
     curses.curs_set(0)
     stdscr.nodelay(True)
-    
-    posicion_seleccion = 0 
-    continuar = True 
-    seleccion = None 
+
+    posicion_seleccion = 0
+    continuar = True
+    seleccion = None
     tiempo_agotado = False
-    stdscr.clear()
-    stdscr.addstr(0, 0, header , curses.color_pair(6))
-    stdscr.addstr(2,0, texto, curses.color_pair(4))
-        
-    
+
     inicio = time.time()
     ultimo_segundo = limite_segundos
-    
-    while continuar: 
-        transcurrido = time.time() - inicio 
+
+    while continuar:
+        h, w = stdscr.getmaxyx()
+        stdscr.clear()
+
+        header_recortado = header[: max(0, w - 1)]
+        texto_recortado = texto[: max(0, w - 1)]
+
+        stdscr.addstr(0, 0, header_recortado, curses.color_pair(6))
+        if h > 2:
+            stdscr.addstr(2, 0, texto_recortado, curses.color_pair(4))
+
+        transcurrido = time.time() - inicio
         restante = int(limite_segundos - transcurrido)
         if restante < 0:
-            restante = 0 
-            
+            restante = 0
+
         if restante != ultimo_segundo:
             if restante > 0:
                 sonido_tiempo_tick()
-                ultimo_segundo = restante
-            
+            ultimo_segundo = restante
+
         if transcurrido >= limite_segundos:
             tiempo_agotado = True
             continuar = False
-            
+
         for i, opcion in enumerate(opciones):
-            
+            fila = i + 4
+            if fila >= h - 3:
+                break
+
+            prefijo = "> " if i == posicion_seleccion else "  "
+            texto_op = prefijo + str(opcion)
+
+            if len(texto_op) > w - 1:
+                if w > 4:
+                    texto_op = texto_op[: w - 4] + "..."
+                else:
+                    texto_op = texto_op[: max(0, w - 1)]
+
             if i == posicion_seleccion:
                 stdscr.attron(curses.color_pair(1))
-                stdscr.addstr(i + 4, 0, f"> {opcion}")
+                stdscr.addstr(fila, 0, texto_op)
                 stdscr.attroff(curses.color_pair(1))
             else:
-                stdscr.addstr(i + 4, 0, f"  {opcion}")
-                
-        timer = len(opciones) + 6
-        ancho_timer = 20
-        
-        if limite_segundos > 0:
-            fraccion = restante / limite_segundos
-        else:
-            fraccion = 0
+                stdscr.addstr(fila, 0, texto_op)
 
-        if fraccion < 0:
-            fraccion = 0
-        if fraccion > 1:
-            fraccion = 1
+        timer_fila = len(opciones) + 6
+        if timer_fila >= h - 2:
+            timer_fila = max(0, h - 3)
 
-        rellenos = int(ancho_timer* fraccion)
-        vacios = ancho_timer  - rellenos
+        ancho_timer = min(20, max(5, w - 2))
 
-        barra = "▉" * rellenos + "-" * vacios 
+        fraccion = restante / limite_segundos if limite_segundos > 0 else 0
+        fraccion = max(0, min(1, fraccion))
+
+        rellenos = int(ancho_timer * fraccion)
+        vacios = ancho_timer - rellenos
+
+        barra = ("▉" * rellenos + "-" * vacios)[: max(0, w - 1)]
 
         if fraccion > 0.66:
-            color_barra = curses.color_pair(7)  
+            color_barra = curses.color_pair(7)
         elif fraccion > 0.33:
-            color_barra = curses.color_pair(8)  
+            color_barra = curses.color_pair(8)
         else:
-            color_barra = curses.color_pair(9)  
+            color_barra = curses.color_pair(9)
 
         stdscr.attron(color_barra)
-        stdscr.addstr(timer, 0, barra)
+        stdscr.addstr(timer_fila, 0, barra)
         stdscr.attroff(color_barra)
 
-        stdscr.addstr(timer + 1, 0, f"Tiempo restante: {int(restante)} segundos", curses.color_pair(4))
+        if timer_fila + 1 < h:
+            linea_tiempo = f"Tiempo restante: {int(restante)} segundos"
+            stdscr.addstr(timer_fila + 1, 0, linea_tiempo[: max(0, w - 1)], curses.color_pair(4))
 
         stdscr.refresh()
-        
+
         if not tiempo_agotado:
             tecla_presionada = stdscr.getch()
 
             if tecla_presionada == curses.KEY_UP and posicion_seleccion > 0:
                 posicion_seleccion -= 1
-
             elif tecla_presionada == curses.KEY_DOWN and posicion_seleccion < len(opciones) - 1:
                 posicion_seleccion += 1
-
-            elif tecla_presionada == curses.KEY_ENTER or tecla_presionada in [10, 13]:
+            elif tecla_presionada in (curses.KEY_ENTER, 10, 13):
                 seleccion = posicion_seleccion
                 continuar = False
-                
+
         time.sleep(0.1)
+
     stdscr.nodelay(False)
-    
     return seleccion, tiempo_agotado
+
 
 
 def mostrar_feedback(stdscr, texto, opciones, seleccion, indice_correcto,
                      tiempo_agotado=False, limite_segundos=0, mensaje_extra=None, es_bonus=True):
     stdscr.clear()
-    stdscr.addstr(0, 0, texto, curses.color_pair(4))
+    h, w = stdscr.getmaxyx()
+
+    texto_recortado = texto[: max(0, w - 1)]
+    stdscr.addstr(0, 0, texto_recortado, curses.color_pair(4))
+
+    ultima_fila = 0
 
     for i, op in enumerate(opciones):
+        fila = i + 2
+        if fila >= h - 3:
+            break
 
-        if i == indice_correcto:  
+        texto_op = "  " + str(op)
+        if len(texto_op) > w - 1:
+            if w > 4:
+                texto_op = texto_op[: w - 4] + "..."
+            else:
+                texto_op = texto_op[: max(0, w - 1)]
+
+        if i == indice_correcto:
             stdscr.attron(curses.color_pair(2))
-            stdscr.addstr(i + 2, 0, f"  {op}")
+            stdscr.addstr(fila, 0, texto_op)
             stdscr.attroff(curses.color_pair(2))
-
-        elif i == seleccion:  
+        elif i == seleccion:
             stdscr.attron(curses.color_pair(3))
-            stdscr.addstr(i + 2, 0, f"  {op}")
+            stdscr.addstr(fila, 0, texto_op)
             stdscr.attroff(curses.color_pair(3))
+        else:
+            stdscr.addstr(fila, 0, texto_op)
 
-        else:  
-            stdscr.addstr(i + 2, 0, f"  {op}")
+        ultima_fila = fila
 
-    linea_mensaje = len(opciones) + 4
+    linea_mensaje = min(ultima_fila + 2, h - 2)
 
     if tiempo_agotado:
-        mensaje = f"Respuesta no registrada. ¡Se agotó el tiempo!"
+        mensaje = "Respuesta no registrada. ¡Se agotó el tiempo!"
     else:
         mensaje = "Presione cualquier tecla para continuar"
-    
 
-    stdscr.addstr(linea_mensaje, 0, mensaje, curses.color_pair(4))
-    
-    if mensaje_extra:
+    mensaje_recortado = mensaje[: max(0, w - 1)]
+    stdscr.addstr(linea_mensaje, 0, mensaje_recortado, curses.color_pair(4))
+
+    if mensaje_extra and linea_mensaje + 1 < h:
         color = curses.color_pair(2) if es_bonus else curses.color_pair(3)
-        stdscr.addstr(linea_mensaje + 1, 0, mensaje_extra, color)
-        
+        extra_recortado = mensaje_extra[: max(0, w - 1)]
+        stdscr.addstr(linea_mensaje + 1, 0, extra_recortado, color)
+
     stdscr.refresh()
     stdscr.getch()
+
 
     
 
@@ -339,8 +390,24 @@ def header(nombre_usuario, puntuacion, racha_actual, pregunta_actual, total_preg
 
 
 def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario):
+    min_altura = 28   
+    min_ancho  = 80  
+
+    while True:
+        h, w = stdscr.getmaxyx()
+
+        if h < min_altura or w < min_ancho:
+            stdscr.clear()
+            stdscr.addstr(0, 0, "La ventana es demasiado pequeña.", curses.A_BOLD)
+            stdscr.addstr(5, 0, "Agranda la ventana y presiona cualquier tecla...")
+            stdscr.refresh()
+            stdscr.getch()
+        else:
+            break
+        
     correctas = 0 
     incorrectas = 0 
+    
     
     
     total_preguntas = sum(len(lista) for _, lista in niveles)
