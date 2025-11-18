@@ -1,3 +1,5 @@
+import json
+import os
 
 '''Banco de preguntas. 
 Las preguntas estan alojadas en diccionarios, cada diccionario tiene tres claves: 
@@ -584,7 +586,8 @@ arte_musica_dificiles = [
 
 
 
-temas = {
+
+TEMAS_POR_DEFECTO = {
     "Cultura": [
         ("Fácil", preguntas_faciles_cultura),
         ("Intermedio", preguntas_intermedias_cultura),
@@ -596,7 +599,7 @@ temas = {
         ("Difícil", preguntas_dificiles_ingles),
     ],
     "Historia": [
-         ("Fácil", preguntas_faciles_historia),
+        ("Fácil", preguntas_faciles_historia),
         ("Intermedio", preguntas_intermedias_historia),
         ("Difícil", preguntas_dificiles_historia),
     ],
@@ -605,10 +608,29 @@ temas = {
         ("Intermedio", preguntas_intermedias_python),
         ("Difícil", preguntas_dificiles_python),
     ],
-    "Musica":[
+    "Musica": [
         ("Fácil", arte_musica_faciles),
         ("Intermedio", arte_musica_intermedias),
         ("Difícil", arte_musica_dificiles),
     ]
 }
+
+RUTA_PREGUNTAS = "preguntas.json"
+
+
+def cargar_temas_desde_archivo():
+    if os.path.exists(RUTA_PREGUNTAS):
+        with open(RUTA_PREGUNTAS, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    return TEMAS_POR_DEFECTO
+
+
+def guardar_temas_en_archivo(temas_actuales):
+    with open(RUTA_PREGUNTAS, "w", encoding="utf-8") as f:
+        json.dump(temas_actuales, f, ensure_ascii=False, indent=2)
+
+
+
+temas = cargar_temas_desde_archivo()
 
