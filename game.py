@@ -1,4 +1,11 @@
 import curses
+from sounds import (
+    sonido_tiempo_tick,
+    sonido_correcta,
+    sonido_incorrecta,
+    sonido_bonus
+)
+
 import random
 from data import temas
 from utils import validar_entero_menu
@@ -175,12 +182,18 @@ def seleccion_opcion_temporizado(stdscr,header, texto, opciones, limite_segundos
         
     
     inicio = time.time()
+    ultimo_segundo = limite_segundos
     
     while continuar: 
         transcurrido = time.time() - inicio 
         restante = int(limite_segundos - transcurrido)
         if restante < 0:
             restante = 0 
+            
+        if restante != ultimo_segundo:
+            if restante > 0:
+                sonido_tiempo_tick()
+                ultimo_segundo = restante
             
         if transcurrido >= limite_segundos:
             tiempo_agotado = True
@@ -328,7 +341,7 @@ def header(nombre_usuario, puntuacion, racha_actual, pregunta_actual, total_preg
 def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario):
     correctas = 0 
     incorrectas = 0 
-
+    
     
     total_preguntas = sum(len(lista) for _, lista in niveles)
     if total_preguntas <= 0:
@@ -378,6 +391,7 @@ def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario
             es_bonus = True
             
             if (not tiempo_agotado) and (seleccion == indice_correcta):
+                sonido_correcta()
                 racha_actual += 1
                 if racha_actual > mejor_racha:
                     mejor_racha = racha_actual
@@ -396,12 +410,16 @@ def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario
                 puntuacion += puntos_pregunta + bonus_racha
                 correctas += 1
                 if bonus_racha > 0:
+                    sonido_bonus()
+
                     mensaje_extra = (
                         f"¡Racha x{racha_actual}! Bonus +{bonus_racha} puntos"
                     )
                     es_bonus = True
 
             else:
+                sonido_incorrecta()
+
                 if racha_actual > 1:
                     mensaje_extra = f"Racha de {racha_actual} rota..."
                     es_bonus = False
