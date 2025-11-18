@@ -119,4 +119,4 @@ flowchart TD
     %% Flujo de jugar directo desde admin
     G --> U[Jugar]
     U --> H
-
+´´´
