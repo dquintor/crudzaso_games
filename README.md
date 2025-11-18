@@ -1,34 +1,82 @@
-# crudzaso_games
-Bienvenid@ a PinguiMundo, un trivia game hecho en Python que se juega directo en la terminal. Todo con interfaz interactiva usando curses, mezcla de preguntas aleatorias y varios niveles de dificultad
-# ¿Qué es PinguiMundo?
-Un juego de preguntas con selección interactiva, colores, feedback visual y diferentes niveles.
-Además, ya incluye un sistema de usuarios para registrarse, iniciar sesión y trackear quién juega.
-# Categorías de preguntas
-- Inglés
-- Python
-- Cultura e historia
-- Música y arte
-El objetivo del equipo es que PinguiMundo se convierta en un banco de preguntas completo, fácil de extender y divertido de jugar
-# Estructura del proyecto
-```bash
-crudzaso_games/
-│
-├── auth.py            # Registro e inicio de sesión
-├── game.py            # Lógica del juego y UI con curses
-├── utils.py           # Validaciones 
-├── data.py            # Categorías y preguntas
-├── main.py            # Punto de entrada al programa
-└── README.md          # Este archivo
+# CRUDAZSO Games
+
+CRUDAZSO Games is a command-line mini‑platform that manages users,
+authentication, and a trivia-style game.\
+The project is structured in modular Python files, making it easy to
+extend, maintain, and scale.
+
+## 🚀 Features
+
+-   **User Registration & Login** (with JSON persistence)
+-   **Admin CRUD** for managing users
+-   **Trivia Game Engine**
+-   **Utility Helpers** for input validation and formatting
+-   **Clean Modular Architecture**
+
+## 📁 Project Structure
+
+    crudzaso_games/
+    │── administrador_crud.py   # Admin CRUD operations for users
+    │── auth.py                 # Authentication logic (login/register)
+    │── data.py                 # JSON data handlers
+    │── game.py                 # Game logic
+    │── main.py                 # Entry point of the app
+    │── preguntas.json          # Trivia questions
+    │── usuarios.json           # Stored user accounts
+    │── utils.py                # Utilities and helpers
+
+## 🧠 How It Works
+
+### 1. **Authentication Layer (`auth.py`)**
+
+Handles: - Creating users - Logging in - Validating credentials -
+Checking roles (user/admin)
+
+### 2. **Data Management (`data.py`)**
+
+Manages read/write operations to: - `usuarios.json` - `preguntas.json`
+
+Ensures persistent storage without databases.
+
+### 3. **CRUD Admin Module (`administrador_crud.py`)**
+
+Admins can: - List users - Edit users - Delete users - View user stats
+
+### 4. **Game Engine (`game.py`)**
+
+Manages: - Random question selection - Score tracking - Game flow
+
+### 5. **Main Controller (`main.py`)**
+
+Acts as the app's router: - Loads menu - Calls authentication - Opens
+game - Opens admin panel based on user role
+
+## 📦 Requirements
+
+-   Python 3.9+
+-   No external packages required (pure Python)
+
+## ▶️ Run the App
+
+``` bash
+python main.py
 ```
-# Cómo jugar
-Ejecuta el juego: python main.py
 
-En el menú inicial: Regístrate o inicia sesión.
+The main menu will guide you through login, registration, and gameplay.
 
-Elige una categoría (cuando todas estén implementadas).
+## 🛠️ Extending the Project
 
-Muévete con las flechas ↑ ↓
+-   Add more game categories\
+-   Implement difficulty levels\
+-   Add more CRUD fields\
+-   Migrate JSON storage to SQLite or PostgreSQL\
+-   Build a GUI or web version
 
-Selecciona con Enter
+## ❤️ About This Project
 
-Obtén feedback visual inmediato (correcto/incorrecto).
+A lightweight modular trivia platform designed for learning, practicing
+Python, and experimenting with CRUD + game dynamics.
+
+------------------------------------------------------------------------
+
+Enjoy hacking on **CRUDAZSO Games**! 🎮🔥
