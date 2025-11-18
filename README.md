@@ -1,4 +1,4 @@
-# CRUDAZSO Games
+# ¿Que tanto sabes? Game
 
 CRUDAZSO Games is a command-line mini‑platform that manages users,
 authentication, and a trivia-style game.\
@@ -79,4 +79,44 @@ Python, and experimenting with CRUD + game dynamics.
 
 ------------------------------------------------------------------------
 
-Enjoy hacking on **CRUDAZSO Games**! 🎮🔥
+```mermaid
+flowchart TD
+
+    A[Inicio del Programa] --> B[Menú Principal]
+
+    B --> C[Iniciar sesión]
+    B --> D[Registrar Usuario]
+    D --> E[Validar Registro]
+    E --> B
+
+    C --> F{¿Usuario es Admin?}
+
+    F -->|SI| G[Menú Administrador]
+    F -->|NO| H[Menú Jugador]
+
+    %% ADMIN
+    G --> I[Administrar preguntas]
+    I --> J[CRUD Preguntas<br/>(Crear, Listar, Actualizar, Eliminar)]
+    G --> S[Salir]
+
+    %% JUGADOR
+    H --> K[Seleccionar Tema]
+    K --> L[Seleccionar Modo]
+    L --> M[Seleccionar Dificultad]
+    M --> N[Configurar Puntos]
+    N --> O[Jugar Preguntas]
+    O --> P[Mostrar Resultados]
+
+    P --> Q{¿Desea volver a jugar?}
+    Q -->|SI| K
+    Q -->|NO| R[Fin del Programa]
+
+    %% Cambio usuario
+    H --> T{¿Desea continuar con el mismo usuario?}
+    T -->|SI| H
+    T -->|NO| B
+
+    %% Flujo de jugar directo desde admin
+    G --> U[Jugar]
+    U --> H
+
