@@ -77,10 +77,7 @@ def seleccionar_lista_preguntas():
 
 
 def listar_preguntas(tema=None, nivel=None, lista=None):
-    """
-    Si no se pasan tema/nivel/lista, se le pide al usuario elegirlos.
-    Si se pasan, solo se listan las preguntas de esa lista.
-    """
+
     if tema is None or nivel is None or lista is None:
         tema, nivel, lista = seleccionar_lista_preguntas()
         if not lista:
@@ -94,7 +91,8 @@ def listar_preguntas(tema=None, nivel=None, lista=None):
     for idx, pregunta in enumerate(lista, start=1):
         correcta = pregunta["correcta"]
         print(
-            f"{idx}) {pregunta['texto']} "
+            f"{idx}) {pregunta['texto']}\n"
+            f"Opciones: {pregunta['opciones']}"
             f"(Correcta: {pregunta['opciones'][correcta]})"
         )
 

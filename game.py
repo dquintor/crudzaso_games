@@ -43,7 +43,7 @@ def seleccionar_tema():
 def seleccionar_modo():
     menu = ("\n---Selecciona modo de juego---\n"
             "1. Normal (Sin limite de tiempo)\n2. Modo contrareloj(10 segundos por pregunta)\n")
-    opcion = validar_entero_menu(menu, "Elija un modo de juego(1-2:)",1,2)
+    opcion = validar_entero_menu(menu, "Elija un modo de juego(1-2):",1,2)
     match opcion:
         case 1:
             return False, 0
@@ -136,7 +136,8 @@ def seleccionar_pregunta(pregunta):
     return texto, opciones, indice_correcta
 
 
-def seleccionar_opcion(stdscr, header, texto, opciones):
+def seleccionar_opcion(stdscr, header, texto, opciones, indice_correcta, permitir_50_50=False):
+
     curses.curs_set(0)
     posicion_seleccion = 0
     continuar = True

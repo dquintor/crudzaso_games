@@ -9,7 +9,7 @@ ADMINS = {"dani"}
 
 def menu_principal():
     menu = (
-        "\n--- PinguiMundo ---\n"
+        "\n---¿QUE TANTO SABES? ---\n"
         "1. Registrar nuevo usuario\n"
         "2. Iniciar sesión\n"
         "3. Salir\n"
