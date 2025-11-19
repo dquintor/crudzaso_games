@@ -133,7 +133,7 @@ def seleccionar_pregunta(pregunta):
     correcta = opciones[pregunta["correcta"]]
     random.shuffle(opciones)
     indice_correcta = opciones.index(correcta)
-    return texto, opciones, indice_correcta
+    return texto, opciones, indice_correcta,correcta
 
 
 def seleccionar_opcion(stdscr, header, texto, opciones, indice_correcta, permitir_50_50=False):
@@ -141,6 +141,7 @@ def seleccionar_opcion(stdscr, header, texto, opciones, indice_correcta, permiti
     curses.curs_set(0)
     posicion_seleccion = 0
     continuar = True
+    
 
     while continuar:
         h, w = stdscr.getmaxyx()
@@ -188,7 +189,7 @@ def seleccionar_opcion(stdscr, header, texto, opciones, indice_correcta, permiti
     return posicion_seleccion
 
 
-def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundos):
+def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundos, permitir_50_50 = False,ind):
     curses.curs_set(0)
     stdscr.nodelay(True)
 
@@ -196,6 +197,22 @@ def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundo
     continuar = True
     seleccion = None
     tiempo_agotado = False
+    eliminadas = set()
+    comodin_activado = False
+    correcta = opciones["correcta"]
+    indice_correcta = opciones.index(correcta)
+    
+    def mover_cursor(delta, pos_actual):
+        if not opciones:
+            return 0
+        nueva = pos_actual
+        while True:
+            nueva = (nueva + delta) % len(opciones)
+            if nueva not in eliminadas:
+                return nueva
+            if nueva == pos_actual:
+                return pos_actual
+
 
     inicio = time.time()
     ultimo_segundo = limite_segundos
@@ -231,7 +248,11 @@ def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundo
                 break
 
             prefijo = "> " if i == posicion_seleccion else "  "
-            texto_op = prefijo + str(opcion)
+            if i in eliminadas:
+                texto_op = prefijo + "---"
+            else:
+                texto_op = prefijo + str(opcion)
+
 
             if len(texto_op) > w - 1:
                 if w > 4:
@@ -276,6 +297,10 @@ def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundo
             stdscr.addstr(timer_fila + 1, 0, linea_tiempo[: max(0, w - 1)], curses.color_pair(4))
 
         stdscr.refresh()
+        if permitir_50_50 and not comodin_activado:
+            mensaje_50 = "Comodín 50/50 disponible: pulsa 'c' para usarlo"
+            stdscr.addstr(h - 1, 0, mensaje_50[: max(0, w - 1)], curses.color_pair(5))
+
 
         if not tiempo_agotado:
             tecla_presionada = stdscr.getch()
@@ -287,6 +312,33 @@ def seleccion_opcion_temporizado(stdscr, header, texto, opciones, limite_segundo
             elif tecla_presionada in (curses.KEY_ENTER, 10, 13):
                 seleccion = posicion_seleccion
                 continuar = False
+            if tecla_presionada == curses.KEY_UP:
+                posicion_seleccion = mover_cursor(-1, posicion_seleccion)
+
+            elif tecla_presionada == curses.KEY_DOWN:
+                posicion_seleccion = mover_cursor(1, posicion_seleccion)
+
+            elif permitir_50_50 and not comodin_activado and tecla_presionada in (ord('c'), ord('C')):
+                indices_incorrectos = [
+                    i for i in range(len(opciones))
+                    if i != correcta and i not in eliminadas
+                ]
+                if len(indices_incorrectos) >= 2:
+                    a_eliminar = random.sample(indices_incorrectos, 2)
+                    eliminadas.update(a_eliminar)
+                    comodin_activado = True
+                    if posicion_seleccion in eliminadas:
+                        if indice_correcta not in eliminadas:
+                            posicion_seleccion = indice_correcta
+                        else:
+                            for i in range(len(opciones)):
+                                if i not in eliminadas:
+                                    posicion_seleccion = i
+                                    break
+
+            elif tecla_presionada in (curses.KEY_ENTER, 10, 13):
+                if posicion_seleccion not in eliminadas:
+                    continuar = False
 
         time.sleep(0.1)
 
@@ -389,6 +441,7 @@ def header(nombre_usuario, puntuacion, racha_actual, pregunta_actual, total_preg
 
 
 
+    
 
 def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario):
     min_altura = 28   
@@ -436,12 +489,14 @@ def juego_curses(stdscr,  niveles, contrareloj , limite_segundos, nombre_usuario
             inicializar_colores()
             curses.curs_set(0)
 
-            texto, opciones_mezcladas, indice_correcta = seleccionar_pregunta(preg)
+            texto, opciones_mezcladas, indice_correcta, correcta = seleccionar_pregunta(preg)
             stdscr.clear()
             info_usuario = header(nombre_usuario,puntuacion,racha_actual,pregunta_actual, total_preguntas
 )
             texto_header = f"[{nombre_nivel}] {texto}"
             stdscr.refresh()
+            
+            
 
             if contrareloj:
                 seleccion, tiempo_agotado = seleccion_opcion_temporizado(
