@@ -15,5 +15,3 @@ def validar_entero_menu(menu_texto, mensaje, minimo=None, maximo=None):
             return valor
         except ValueError:
             print("Opción inválida. Ingrese un valor disponible en el menú.\n")
-            
-            
